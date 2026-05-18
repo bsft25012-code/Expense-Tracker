@@ -45,7 +45,7 @@ function Dashboard() {
 
             const response = await axios.get(
 
-                `http://localhost:5000/api/transactions/${user._id}`
+                `https://expense-tracker-ukw9.onrender.com`
 
             );
 
@@ -65,7 +65,7 @@ function Dashboard() {
         try {
 
             const response = await axios.get(
-                `http://localhost:5000/api/transactions/${user._id}`
+                `https://expense-tracker-ukw9.onrender.com`
             );
 
             setTransactions(response.data);
@@ -102,7 +102,7 @@ function Dashboard() {
 
             await axios.post(
 
-                "http://localhost:5000/api/transactions/add",
+                "https://expense-tracker-ukw9.onrender.com",
 
                 newTransaction
             );
@@ -131,7 +131,7 @@ function Dashboard() {
 
             await axios.delete(
 
-                `http://localhost:5000/api/transactions/${id}`
+                `https://expense-tracker-ukw9.onrender.com`
 
             );
 

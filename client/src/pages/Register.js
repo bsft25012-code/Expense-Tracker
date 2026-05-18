@@ -24,7 +24,7 @@ function Register() {
 
             const response = await axios.post(
 
-                "http://localhost:5000/api/auth/register",
+                "https://expense-tracker-ukw9.onrender.com",
 
                 {
                     name,
