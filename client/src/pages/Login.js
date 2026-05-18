@@ -22,7 +22,7 @@ function Login() {
 
             const response = await axios.post(
 
-                "https://expense-tracker-ukw9.onrender.com",
+                "https://expense-tracker-ukw9.onrender.com/api/auth/login",
 
                 {
                     email,
