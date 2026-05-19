@@ -21,19 +21,14 @@ function Dashboard() {
 
     const navigate = useNavigate();
 
+    // GET USER FROM LOCAL STORAGE
     const userData = localStorage.getItem("user");
 
     const user = userData
         ? JSON.parse(userData)
         : null;
 
-    if (!user) {
-
-        navigate("/");
-
-        return null;
-    }
-
+    // STATES
     const [transactions, setTransactions] = useState([]);
 
     const [title, setTitle] = useState("");
@@ -47,7 +42,6 @@ function Dashboard() {
 
 
     // FETCH TRANSACTIONS
-
     const fetchTransactions = async () => {
 
         try {
@@ -67,17 +61,22 @@ function Dashboard() {
 
 
     // LOAD DATA
-
     useEffect(() => {
+
+        if (!user) {
+
+            navigate("/");
+
+            return;
+        }
 
         fetchTransactions();
 
-    }, [user]);
+    }, []);
 
 
 
     // ADD TRANSACTION
-
     const handleAddTransaction = async (e) => {
 
         e.preventDefault();
@@ -110,6 +109,8 @@ function Dashboard() {
 
             setCategory("");
 
+            setType("expense");
+
             fetchTransactions();
 
         } catch (error) {
@@ -121,7 +122,6 @@ function Dashboard() {
 
 
     // DELETE TRANSACTION
-
     const handleDelete = async (id) => {
 
         try {
@@ -141,7 +141,6 @@ function Dashboard() {
 
 
     // LOGOUT
-
     const handleLogout = () => {
 
         localStorage.removeItem("token");
@@ -154,7 +153,6 @@ function Dashboard() {
 
 
     // CALCULATIONS
-
     const income = transactions
         .filter((item) => item.type === "income")
         .reduce((acc, item) => acc + Number(item.amount), 0);
@@ -168,7 +166,6 @@ function Dashboard() {
 
 
     // CHART DATA
-
     const data = {
 
         labels: ["Income", "Expense"],
@@ -196,7 +193,6 @@ function Dashboard() {
         <div className="container mt-4">
 
             {/* HEADER */}
-
             <div className="d-flex justify-content-between align-items-center">
 
                 <h2>
@@ -217,7 +213,6 @@ function Dashboard() {
 
 
             {/* BALANCE CARDS */}
-
             <div className="row text-center">
 
                 <div className="col-md-4 mb-3">
@@ -269,7 +264,6 @@ function Dashboard() {
 
 
             {/* ADD TRANSACTION */}
-
             <div className="card p-4 shadow mt-4">
 
                 <h3 className="mb-3">
@@ -364,7 +358,6 @@ function Dashboard() {
 
 
             {/* CHART */}
-
             <div className="card p-4 shadow mt-4">
 
                 <h3 className="mb-3">
@@ -372,7 +365,9 @@ function Dashboard() {
                 </h3>
 
                 <div style={{ width: "300px" }}>
+
                     <Pie data={data} />
+
                 </div>
 
             </div>
@@ -380,7 +375,6 @@ function Dashboard() {
 
 
             {/* TRANSACTION TABLE */}
-
             <div className="card p-4 shadow mt-4 mb-5">
 
                 <h3 className="mb-3">
