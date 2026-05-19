@@ -30,39 +30,38 @@ function Dashboard() {
 
 
   // FETCH TRANSACTIONS
-  const fetchTransactions = async () => {
 
-  if (!user) return;
-
-  try {
-
-    const response = await axios.get(
-      `https://expense-tracker-ukw9.onrender.com/api/transactions/${user?._id}`
-    );
-
-    setTransactions(response.data);
-
-  } catch (error) {
-
-    console.log(error);
-  }
-};
 
 
 
   // LOAD DATA
 useEffect(() => {
 
-  if (!user) {
+  const getData = async () => {
 
-    navigate("/");
-    return;
-  }
+    if (!user) {
 
-  fetchTransactions();
+      navigate("/");
+      return;
+    }
+
+    try {
+
+      const response = await axios.get(
+        `https://expense-tracker-ukw9.onrender.com/api/transactions/${user?._id}`
+      );
+
+      setTransactions(response.data);
+
+    } catch (error) {
+
+      console.log(error);
+    }
+  };
+
+  getData();
 
 }, [navigate, user]);
-
 
 
   // ADD TRANSACTION
@@ -93,7 +92,7 @@ useEffect(() => {
       setCategory("");
       setType("expense");
 
-      fetchTransactions();
+      window.location.reload();
 
     } catch (error) {
 
@@ -112,7 +111,7 @@ useEffect(() => {
         `https://expense-tracker-ukw9.onrender.com/api/transactions/${id}`
       );
 
-      fetchTransactions();
+     window.location.reload();
 
     } catch (error) {
 
