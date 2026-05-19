@@ -1,18 +1,14 @@
 import { useEffect, useState } from "react";
-
 import axios from "axios";
-
 import { useNavigate } from "react-router-dom";
 
-import {
-    Pie
-} from "react-chartjs-2";
+import { Pie } from "react-chartjs-2";
 
 import {
     Chart as ChartJS,
     ArcElement,
     Tooltip,
-    Legend
+    Legend,
 } from "chart.js";
 
 ChartJS.register(
@@ -25,9 +21,18 @@ function Dashboard() {
 
     const navigate = useNavigate();
 
-    const user = JSON.parse(
-        localStorage.getItem("user")
-    );
+    const userData = localStorage.getItem("user");
+
+    const user = userData
+        ? JSON.parse(userData)
+        : null;
+
+    if (!user) {
+
+        navigate("/");
+
+        return null;
+    }
 
     const [transactions, setTransactions] = useState([]);
 
@@ -39,14 +44,16 @@ function Dashboard() {
 
     const [category, setCategory] = useState("");
 
+
+
+    // FETCH TRANSACTIONS
+
     const fetchTransactions = async () => {
 
         try {
 
             const response = await axios.get(
-
-                `https://expense-tracker-ukw9.onrender.com`
-
+                `https://expense-tracker-ukw9.onrender.com/api/transactions/${user?._id}`
             );
 
             setTransactions(response.data);
@@ -57,30 +64,20 @@ function Dashboard() {
         }
     };
 
+
+
+    // LOAD DATA
 
     useEffect(() => {
 
-    const getData = async () => {
+        fetchTransactions();
 
-        try {
+    }, [user]);
 
-            const response = await axios.get(
-                `https://expense-tracker-ukw9.onrender.com`
-            );
 
-            setTransactions(response.data);
-
-        } catch (error) {
-
-            console.log(error);
-        }
-    };
-
-    getData();
-
-}, [user._id]);
 
     // ADD TRANSACTION
+
     const handleAddTransaction = async (e) => {
 
         e.preventDefault();
@@ -101,9 +98,7 @@ function Dashboard() {
             };
 
             await axios.post(
-
-                "https://expense-tracker-ukw9.onrender.com",
-
+                "https://expense-tracker-ukw9.onrender.com/api/transactions/add",
                 newTransaction
             );
 
@@ -124,15 +119,15 @@ function Dashboard() {
     };
 
 
-  
+
+    // DELETE TRANSACTION
+
     const handleDelete = async (id) => {
 
         try {
 
             await axios.delete(
-
-                `https://expense-tracker-ukw9.onrender.com`
-
+                `https://expense-tracker-ukw9.onrender.com/api/transactions/${id}`
             );
 
             fetchTransactions();
@@ -144,7 +139,9 @@ function Dashboard() {
     };
 
 
-    
+
+    // LOGOUT
+
     const handleLogout = () => {
 
         localStorage.removeItem("token");
@@ -155,34 +152,35 @@ function Dashboard() {
     };
 
 
-    
+
+    // CALCULATIONS
+
     const income = transactions
-    .filter((item) => item.type === "income")
-    .reduce((acc, item) => acc + Number(item.amount), 0);
+        .filter((item) => item.type === "income")
+        .reduce((acc, item) => acc + Number(item.amount), 0);
 
     const expense = transactions
-    .filter((item) => item.type === "expense")
-    .reduce((acc, item) => acc + Number(item.amount), 0);
+        .filter((item) => item.type === "expense")
+        .reduce((acc, item) => acc + Number(item.amount), 0);
 
     const balance = income - expense;
 
 
-    
+
+    // CHART DATA
+
     const data = {
 
         labels: ["Income", "Expense"],
 
         datasets: [
-
             {
                 label: "Amount",
 
                 data: [income, expense],
 
                 backgroundColor: [
-
                     "green",
-
                     "red",
                 ],
 
@@ -192,18 +190,17 @@ function Dashboard() {
     };
 
 
+
     return (
 
         <div className="container mt-4">
 
-           
+            {/* HEADER */}
 
             <div className="d-flex justify-content-between align-items-center">
 
                 <h2>
-
                     Welcome {user?.name}
-
                 </h2>
 
                 <button
@@ -218,7 +215,8 @@ function Dashboard() {
             <hr />
 
 
-            
+
+            {/* BALANCE CARDS */}
 
             <div className="row text-center">
 
@@ -235,6 +233,7 @@ function Dashboard() {
                 </div>
 
 
+
                 <div className="col-md-4 mb-3">
 
                     <div className="card p-3 shadow">
@@ -242,14 +241,13 @@ function Dashboard() {
                         <h4>Total Income</h4>
 
                         <h3 className="text-success">
-
                             Rs {income}
-
                         </h3>
 
                     </div>
 
                 </div>
+
 
 
                 <div className="col-md-4 mb-3">
@@ -259,9 +257,7 @@ function Dashboard() {
                         <h4>Total Expense</h4>
 
                         <h3 className="text-danger">
-
                             Rs {expense}
-
                         </h3>
 
                     </div>
@@ -271,14 +267,13 @@ function Dashboard() {
             </div>
 
 
-            
+
+            {/* ADD TRANSACTION */}
 
             <div className="card p-4 shadow mt-4">
 
                 <h3 className="mb-3">
-
                     Add Transaction
-
                 </h3>
 
                 <form onSubmit={handleAddTransaction}>
@@ -299,6 +294,7 @@ function Dashboard() {
                         </div>
 
 
+
                         <div className="col-md-2 mb-3">
 
                             <input
@@ -311,6 +307,7 @@ function Dashboard() {
                             />
 
                         </div>
+
 
 
                         <div className="col-md-3 mb-3">
@@ -327,6 +324,7 @@ function Dashboard() {
                         </div>
 
 
+
                         <div className="col-md-2 mb-3">
 
                             <select
@@ -336,15 +334,11 @@ function Dashboard() {
                             >
 
                                 <option value="income">
-
                                     Income
-
                                 </option>
 
                                 <option value="expense">
-
                                     Expense
-
                                 </option>
 
                             </select>
@@ -352,12 +346,11 @@ function Dashboard() {
                         </div>
 
 
+
                         <div className="col-md-2 mb-3">
 
                             <button className="btn btn-primary w-100">
-
                                 Add
-
                             </button>
 
                         </div>
@@ -369,23 +362,21 @@ function Dashboard() {
             </div>
 
 
+
             {/* CHART */}
 
             <div className="card p-4 shadow mt-4">
 
                 <h3 className="mb-3">
-
                     Expense Report
-
                 </h3>
 
                 <div style={{ width: "300px" }}>
-
                     <Pie data={data} />
-
                 </div>
 
             </div>
+
 
 
             {/* TRANSACTION TABLE */}
@@ -393,9 +384,7 @@ function Dashboard() {
             <div className="card p-4 shadow mt-4 mb-5">
 
                 <h3 className="mb-3">
-
                     Transactions
-
                 </h3>
 
                 <table className="table">
@@ -419,6 +408,7 @@ function Dashboard() {
                     </thead>
 
 
+
                     <tbody>
 
                         {
@@ -437,8 +427,8 @@ function Dashboard() {
                                         <span
                                             className={
                                                 item.type === "income"
-                                                ? "text-success"
-                                                : "text-danger"
+                                                    ? "text-success"
+                                                    : "text-danger"
                                             }
                                         >
 
