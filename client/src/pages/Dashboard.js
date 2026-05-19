@@ -32,34 +32,36 @@ function Dashboard() {
   // FETCH TRANSACTIONS
   const fetchTransactions = async () => {
 
-    try {
+  if (!user) return;
 
-      const response = await axios.get(
-        `https://expense-tracker-ukw9.onrender.com/api/transactions/${user?._id}`
-      );
+  try {
 
-      setTransactions(response.data);
+    const response = await axios.get(
+      `https://expense-tracker-ukw9.onrender.com/api/transactions/${user?._id}`
+    );
 
-    } catch (error) {
+    setTransactions(response.data);
 
-      console.log(error);
-    }
-  };
+  } catch (error) {
+
+    console.log(error);
+  }
+};
 
 
 
   // LOAD DATA
-  useEffect(() => {
+useEffect(() => {
 
-    if (!user) {
+  if (!user) {
 
-      navigate("/");
-      return;
-    }
+    navigate("/");
+    return;
+  }
 
-    fetchTransactions();
+  fetchTransactions();
 
-  }, []);
+}, [navigate, user]);
 
 
 
